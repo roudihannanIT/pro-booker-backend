@@ -4,7 +4,7 @@ export enum BookingStatus {
     COMPLETED = 'completed',
 }
 
-export interface Book {
+export interface Booking {
     id: string;
     roomId: string;
     userId: string;

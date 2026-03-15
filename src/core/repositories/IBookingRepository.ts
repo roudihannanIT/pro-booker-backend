@@ -1,6 +1,6 @@
-import {Book} from '../entities/Book';
+import {Booking} from '../entities/Book';
 
 export interface IBookingRepository {
-    create(booking: Book): Promise<void>;
-    findOverlap(roomId: string, start: Date, end: Date): Promise<Book | null>;
+    create(booking: Booking): Promise<void>;
+    findOverlap(roomId: string, start: Date, end: Date): Promise<Booking | null>;
 }

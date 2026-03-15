@@ -1,10 +1,10 @@
-import {Book, BookingStatus} from '../core/entities/Book';
+import {Booking, BookingStatus} from '../core/entities/Book';
 import {IBookingRepository} from '../core/repositories/IBookingRepository';
 
 export class CreateBooking {
     constructor(private bookingRepository: IBookingRepository) {}
 
-    async execute(data: {roomId: string; userId: string; start: Date; end: Date}): Promise<Book> {
+    async execute(data: {roomId: string; userId: string; start: Date; end: Date}): Promise<Booking> {
 
         // The end time cannot be before the start time
         if (data.end <= data.start) {
@@ -19,7 +19,7 @@ export class CreateBooking {
         );
 
         // Prepare the booking
-        const newBooking: Book = {
+        const newBooking: Booking = {
             id: Math.random().toString(36).substr(2, 9), // Simple ID generation
             roomId: data.roomId,
             userId: data.userId,
