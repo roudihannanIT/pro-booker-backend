@@ -1,51 +1,46 @@
-import { Request, Response } from "express";
-import { CreateBooking } from "../../use-cases/CreateBooking";
-import { PrismaBookingRepository } from "../../infrastructure/repositories/PrismaBookingrepository";
+import { Request, Response } from 'express';
+import { CreateBooking } from '../../use-cases/CreateBooking';
+import { PrismaBookingRepository } from '../../infrastructure/repositories/PrismaBookingrepository';
+import { CreateBookingSchema } from '../dtos/CreateBookDTO';
+import z from 'zod';
 
 export class BookingController {
-    async create(req: Request, res: Response) {
-        try {
-            const {roomId, userId, startTime, endTime} = req.body;
+  async create(req: Request, res: Response) {
+    try {
+      // 1. Data validation
+      const validatedData = CreateBookingSchema.parse(req.body);
 
-            if (!startTime || !endTime) {
-                return res.status(400).json({ status: "error", message: "startTime and endTime are required" });
-            }
+      // 2. The conversion (since Zod assured us that the data was correct)
+      const { roomId, userId, startTime, endTime } = validatedData;
+      
+      const bookingRepository = new PrismaBookingRepository();
+      const createBookingUseCase = new CreateBooking(bookingRepository);
 
-            // 1. Converting incoming text into dates (Date Objects)
-            const start = new Date(startTime);
-            const end = new Date(endTime);
+      const booking = await createBookingUseCase.execute({
+        roomId,
+        userId,
+        start: new Date(startTime),
+        end: new Date(endTime)
+      });
 
-            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-                return res.status(400).json({ 
-                    status: "error", 
-                    message: "Invalid date format. Please use ISO 8601 (e.g., 2026-03-22T10:00:00Z)" 
-                });
-            }
+      return res.status(201).json({ status: 'success', data: booking });
 
-            // 2. Preparing the Repository and Use Case
-            const bookingRepository = new PrismaBookingRepository();
-            const createBookingUseCase = new CreateBooking(bookingRepository);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          status: 'error',
+          errors: error.issues.map((issue: { path: any; message: any; }) => ({
+            path: issue.path,
+            message: issue.message
+          }))
+        });
+      }
 
-            // 3. Implementation
-            const booking = await createBookingUseCase.execute({
-                roomId,
-                userId,
-                start: start,
-                end: end
-            });
-
-            // 4. Reply with success
-            return res.status(201).json({
-                status: 'success',
-                data: booking
-            });
-            
-        } catch (error: any) {
-            // 5. Handling errors (such as scheduling conflicts)
-            return res.status(400).json({
-                status: 'error',
-                message: error.message
-            });
-        }
+      // Any other error (such as scheduling conflicts or database errors)
+      return res.status(400).json({
+        status: 'error',
+        message: error.message || 'An unexpected error occurred'
+      });
     }
+  }
 }
