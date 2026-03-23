@@ -58,4 +58,18 @@ export class PrismaBookingRepository implements IBookingRepository {
     });
     return bookings as unknown as Booking[];
   }
+
+  async delete(id: string): Promise<void> {
+    await prisma.booking.delete({
+      where: { id }
+    });
+  }
+
+  async findById(id: string): Promise<Booking | null> {
+    const booking = await prisma.booking.findUnique({
+      where: { id }
+    });
+    return booking as unknown as Booking | null;
+  }
+
 }

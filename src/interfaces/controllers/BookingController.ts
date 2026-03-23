@@ -45,14 +45,35 @@ export class BookingController {
   }
 
   async getUserBookings(req: Request, res: Response) {
-  try {
-    const userId = Array.isArray(req.params.userId) ? req.params.userId[0] : req.params.userId;
-    const repository = new PrismaBookingRepository();
-    const bookings = await repository.findByUserId(userId);
-    
-    return res.status(200).json({ status: 'success', data: bookings });
-  } catch (error: any) {
-    return res.status(500).json({ status: 'error', message: error.message });
+    try {
+      const userId = Array.isArray(req.params.userId) ? req.params.userId[0] : req.params.userId;
+      const repository = new PrismaBookingRepository();
+      const bookings = await repository.findByUserId(userId);
+      
+      return res.status(200).json({ status: 'success', data: bookings });
+    } catch (error: any) {
+      return res.status(500).json({ status: 'error', message: error.message });
+    }
   }
-}
+
+  async cancel(req: Request, res: Response) {
+    try {
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      const repository = new PrismaBookingRepository();
+
+      // 1. Verify that there is a reservation
+      const existingBooking = await repository.findById(id);
+      if (!existingBooking) {
+        return res.status(404).json({ status: 'error', message: 'Booking not found' });
+      }
+
+      // 2. Perform deletion
+      await repository.delete(id);
+
+      return res.status(200).json({ status: 'success', message: 'Booking cancelled successfully' });
+    } catch (error: any) {
+      return res.status(500).json({ status: 'error', message: error.message });
+    }
+  }
+
 }
