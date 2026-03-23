@@ -1,8 +1,7 @@
+import {prisma} from "../database/prisma";
 import { PrismaClient } from '@prisma/client';
-import { Booking } from '@core/entities/Book'; 
+import { Booking } from '../../core/entities/Book'; 
 import { IBookingRepository } from '../../core/repositories/IBookingRepository';
-
-const prisma = new PrismaClient();
 
 export class PrismaBookingRepository implements IBookingRepository {
   
