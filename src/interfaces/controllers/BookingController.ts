@@ -43,4 +43,16 @@ export class BookingController {
       });
     }
   }
+
+  async getUserBookings(req: Request, res: Response) {
+  try {
+    const userId = Array.isArray(req.params.userId) ? req.params.userId[0] : req.params.userId;
+    const repository = new PrismaBookingRepository();
+    const bookings = await repository.findByUserId(userId);
+    
+    return res.status(200).json({ status: 'success', data: bookings });
+  } catch (error: any) {
+    return res.status(500).json({ status: 'error', message: error.message });
+  }
+}
 }

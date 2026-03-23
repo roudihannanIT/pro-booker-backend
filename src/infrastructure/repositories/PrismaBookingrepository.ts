@@ -50,4 +50,12 @@ export class PrismaBookingRepository implements IBookingRepository {
     
     return overlap as unknown as Booking; 
   }
+
+  async findByUserId(userId: string): Promise<Booking[]> {
+    const bookings = await prisma.booking.findMany({
+      where: { userId },
+      orderBy: { startTime: 'asc' } 
+    });
+    return bookings as unknown as Booking[];
+  }
 }
