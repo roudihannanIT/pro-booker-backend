@@ -1,47 +1,42 @@
 import { Request, Response } from 'express';
-import { CreateBooking } from '../../use-cases/CreateBooking';
+import { CreateBooking } from '../../use-cases/booking/CreateBooking';
+import { GetUserBookings } from '../../use-cases/booking/GetUserBookings';
+import { CancelBooking } from '../../use-cases/booking/CancelBooking';
 import { PrismaBookingRepository } from '../../infrastructure/repositories/PrismaBookingrepository';
-import { CreateBookingSchema } from '../dtos/CreateBookDTO';
-import z from 'zod';
 
 export class BookingController {
+    // 1. create booking
+    create = async (req: Request, res: Response) => {
+        const repository = new PrismaBookingRepository();
+        const useCase = new CreateBooking(repository);
 
-  getUserBookings = async (req: Request, res: Response) => {
-    const { userId } = req.params;
-    
-    if (typeof userId !== 'string') throw new Error('Invalid user ID');
-    
-    const repository = new PrismaBookingRepository();
-    const bookings = await repository.findByUserId(userId);
-    
-    res.status(200).json({ status: 'success', data: bookings });
-  };
+        const booking = await useCase.execute({
+            roomId: req.body.roomId,
+            userId: req.body.userId,
+            start: new Date(req.body.startTime),
+            end: new Date(req.body.endTime)
+        });
 
-  create = async (req: Request, res: Response) => {
-    const validatedData = CreateBookingSchema.parse(req.body);
-    const repository = new PrismaBookingRepository();
-    const createBookingUseCase = new CreateBooking(repository);
+        res.status(201).json({ status: 'success', data: booking });
+    };
 
-    const booking = await createBookingUseCase.execute({
-      roomId: validatedData.roomId,
-      userId: validatedData.userId,
-      start: new Date(validatedData.startTime),
-      end: new Date(validatedData.endTime)
-    });
+    // 2. get user bookings 
+    getUserBookings = async (req: Request, res: Response) => {
+        const userId = Array.isArray(req.params.userId) ? req.params.userId[0] : req.params.userId;
+        const repository = new PrismaBookingRepository();
+        const useCase = new GetUserBookings(repository);
 
-    res.status(201).json({ status: 'success', data: booking });
-  };
+        const bookings = await useCase.execute(userId);
+        res.status(200).json({ status: 'success', data: bookings });
+    };
 
-  cancel = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const repository = new PrismaBookingRepository();
-    
-    if (typeof id !== 'string') throw new Error('Invalid booking ID');
-    
-    const existingBooking = await repository.findById(id);
-    if (!existingBooking) throw new Error('Booking not found');
+    // 3. Cancel booking
+    cancel = async (req: Request, res: Response) => {
+        const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+        const repository = new PrismaBookingRepository();
+        const useCase = new CancelBooking(repository);
 
-    await repository.delete(id);
-    res.status(200).json({ status: 'success', message: 'Booking cancelled' });
-  };
+        await useCase.execute(id);
+        res.status(200).json({ status: 'success', message: 'Booking deleted successfully' });
+    };
 }
