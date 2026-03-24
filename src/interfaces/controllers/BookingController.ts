@@ -5,75 +5,43 @@ import { CreateBookingSchema } from '../dtos/CreateBookDTO';
 import z from 'zod';
 
 export class BookingController {
-  async create(req: Request, res: Response) {
-    try {
-      // 1. Data validation
-      const validatedData = CreateBookingSchema.parse(req.body);
 
-      // 2. The conversion (since Zod assured us that the data was correct)
-      const { roomId, userId, startTime, endTime } = validatedData;
-      
-      const bookingRepository = new PrismaBookingRepository();
-      const createBookingUseCase = new CreateBooking(bookingRepository);
+  getUserBookings = async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    
+    if (typeof userId !== 'string') throw new Error('Invalid user ID');
+    
+    const repository = new PrismaBookingRepository();
+    const bookings = await repository.findByUserId(userId);
+    
+    res.status(200).json({ status: 'success', data: bookings });
+  };
 
-      const booking = await createBookingUseCase.execute({
-        roomId,
-        userId,
-        start: new Date(startTime),
-        end: new Date(endTime)
-      });
+  create = async (req: Request, res: Response) => {
+    const validatedData = CreateBookingSchema.parse(req.body);
+    const repository = new PrismaBookingRepository();
+    const createBookingUseCase = new CreateBooking(repository);
 
-      return res.status(201).json({ status: 'success', data: booking });
+    const booking = await createBookingUseCase.execute({
+      roomId: validatedData.roomId,
+      userId: validatedData.userId,
+      start: new Date(validatedData.startTime),
+      end: new Date(validatedData.endTime)
+    });
 
-    } catch (error: any) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({
-          status: 'error',
-          errors: error.issues.map((issue: { path: any; message: any; }) => ({
-            path: issue.path,
-            message: issue.message
-          }))
-        });
-      }
+    res.status(201).json({ status: 'success', data: booking });
+  };
 
-      // Any other error (such as scheduling conflicts or database errors)
-      return res.status(400).json({
-        status: 'error',
-        message: error.message || 'An unexpected error occurred'
-      });
-    }
-  }
+  cancel = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const repository = new PrismaBookingRepository();
+    
+    if (typeof id !== 'string') throw new Error('Invalid booking ID');
+    
+    const existingBooking = await repository.findById(id);
+    if (!existingBooking) throw new Error('Booking not found');
 
-  async getUserBookings(req: Request, res: Response) {
-    try {
-      const userId = Array.isArray(req.params.userId) ? req.params.userId[0] : req.params.userId;
-      const repository = new PrismaBookingRepository();
-      const bookings = await repository.findByUserId(userId);
-      
-      return res.status(200).json({ status: 'success', data: bookings });
-    } catch (error: any) {
-      return res.status(500).json({ status: 'error', message: error.message });
-    }
-  }
-
-  async cancel(req: Request, res: Response) {
-    try {
-      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-      const repository = new PrismaBookingRepository();
-
-      // 1. Verify that there is a reservation
-      const existingBooking = await repository.findById(id);
-      if (!existingBooking) {
-        return res.status(404).json({ status: 'error', message: 'Booking not found' });
-      }
-
-      // 2. Perform deletion
-      await repository.delete(id);
-
-      return res.status(200).json({ status: 'success', message: 'Booking cancelled successfully' });
-    } catch (error: any) {
-      return res.status(500).json({ status: 'error', message: error.message });
-    }
-  }
-
+    await repository.delete(id);
+    res.status(200).json({ status: 'success', message: 'Booking cancelled' });
+  };
 }
