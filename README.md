@@ -46,29 +46,31 @@ This project strictly adheres to **Clean Architecture** (Uncle Bob's approach), 
 
 ## 📂 Project Structure
 
-├── 📁 prisma                 # Database Schema & Migrations (Prisma ORM)
-│   ├── 📁 migrations         # History of database changes
-│   └── 📄 schema.prisma      # Data models definition
+```
+├── 📁 prisma                                   # Database Schema & Migrations (Prisma ORM)
+│   ├── 📁 migrations                           # History of database changes
+│   └── 📄 schema.prisma                        # Data models definition
 ├── 📁 src
-│   ├── 📁 core               # 🧠 Domain Layer (Pure Business Logic)
-│   │   ├── 📁 entities       # Domain Objects (Booking, User, Room)
-│   │   └── 📁 repositories   # Abstract Interfaces (Dependency Inversion)
-│   ├── 📁 use-cases          # ⚙️ Application Layer (Business Orchestration)
-│   │   └── 📁 booking        # Specific logic for booking operations
-│   ├── 📁 infrastructure     # 🔌 Data Layer (External Tools & Drivers)
-│   │   ├── 📁 database       # Prisma Client configuration
-│   │   └── 📁 repositories   # Concrete implementations of Core Interfaces
-│   ├── 📁 interfaces         # 🌐 Presentation Layer (Adapters)
-│   │   ├── 📁 controllers    # Request handling & Use Case execution
-│   │   ├── 📁 dtos           # Data Transfer Objects (Validation Schemas)
-│   │   ├── 📁 middlewares    # Error handling & Security guards
-│   │   └── 📄 routes.ts      # API Endpoint definitions
-│   ├── 📁 shared             # 🛠️ Cross-cutting concerns (Global Helpers)
-│   │   └── 📁 utils          # Reusable utility functions
-│   └── 📄 server.ts          # Application entry point
-├── 🐳 docker-compose.yml     # Containerized environment (PostgreSQL)
-├── 📄 .env.example           # 🔑 Template for environment variables
-└── 📄 tsconfig.json          # TypeScript compiler configuration
+│   ├── 📁 core                                 # 🧠 Domain Layer (Pure Business Logic)
+│   │   ├── 📁 entities                         # Domain Objects (Booking, User, Room)
+│   │   └── 📁 repositories                     # Abstract Interfaces (Dependency Inversion)
+│   ├── 📁 infrastructure                       # 🔌 Data Layer (External Tools & Drivers)
+│   │   ├── 📁 database                         # Prisma Client configuration
+│   │   └── 📁 repositories                     # Concrete implementations of Core Interfaces
+│   ├── 📁 interfaces                           # 🌐 Presentation Layer (Adapters)
+│   │   ├── 📁 controllers                      # Request handling & Use Case execution
+│   │   ├── 📁 dtos                             # Data Transfer Objects (Validation Schemas)
+│   │   ├── 📁 middlewares                      # Error handling & Security guards
+│   │   └── 📄 routes.ts                        # API Endpoint definitions
+│   ├── 📁 shared                               # 🛠️ Cross-cutting concerns (Global Helpers)
+│   │   └── 📁 utils                            # Reusable utility functions
+│   ├── 📁 use-cases                            # ⚙️ Application Layer (Business Orchestration)
+│   │   └── 📁 booking                          # Specific logic for booking operations
+│   └── 📄 server.ts                            # Application entry point
+├── ⚙️ .env.example                             # 🔑 Template for environment variables
+├── 🐳 docker-compose.yml                       # Containerized environment (PostgreSQL)
+└── ⚙️ tsconfig.json                            # TypeScript compiler configuration
+```
 
 ---
 
