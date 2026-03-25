@@ -178,6 +178,6 @@ Copy the example environment file and fill in your details:
 The primary goal of this repository is to demonstrate how to build software that is "Screaming Architecture" – where the folder structure itself tells you what the system does, rather than what framework it uses.
 
 ## 👨‍💻 Author
-Roudi Hannan |  IT Engineer [[LinkedIn Profile Link](https://www.linkedin.com/in/roudi-hannan-6243a5366/)] | [[Instagram](https://www.instagram.com/roudihannan8)]
+Roudi Hannan |  IT Engineer [[LinkedIn](https://www.linkedin.com/in/roudi-hannan-6243a5366/)] | [[Instagram](https://www.instagram.com/roudihannan8)]
 
 Entwickelt mit Fokus auf Qualität, Skalierbarkeit und Clean Code.
