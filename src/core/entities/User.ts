@@ -1,14 +1,16 @@
 export enum UserRole {
-    ADMIN = 'admin',
-    EMPLOYEE = 'employee',
+    ADMIN = 'ADMIN',  
+    EMPLOYEE = 'EMPLOYEE',
 }
 
-export interface User {
-    id: string;
-    name: string;
-    email: string;
-    passwordHash: string;
-    role: UserRole;
-    createdAt: Date;
-    updatedAt: Date;
+export class User {
+    constructor(
+        public id: string,
+        public name: string,
+        public email: string,
+        public passwordHash: string,
+        public role: UserRole = UserRole.EMPLOYEE,
+        public createdAt: Date = new Date(),
+        public updatedAt: Date = new Date()
+    ) {}
 }
