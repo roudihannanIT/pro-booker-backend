@@ -22,7 +22,7 @@ This project strictly adheres to **Clean Architecture** (Uncle Bob's approach), 
 ### 3. Infrastructure Layer
 - **External Tools:** Contains concrete implementations of repository interfaces using **Prisma ORM**.
 - **Database:** PostgreSQL managed via Docker for environment consistency.
-- **Security:** Hashing and Token services (Bcrypt/JWT) — (Planned 🚧)
+- **Security:** Hashing and Token services (Bcrypt/JWT) — (Implemented)
 
 ### 4. Interface Layer (Presentation)
 - **Controllers:** Handles HTTP requests and maps them to Use Cases.
@@ -41,6 +41,7 @@ This project strictly adheres to **Clean Architecture** (Uncle Bob's approach), 
 | **Database** | PostgreSQL (Dockerized) |
 | **Validation** | Zod |
 | **Logging** | ts-node-dev |
+| **Security** | JWT (JsonWebToken), Bcrypt (Password Hashing) |
 
 ---
 
@@ -111,6 +112,19 @@ Manage room reservations and schedules.
 * **Method:** `DELETE`
 * **Success Response (200):** `{ "message": "Booking deleted" }`
 
+### 🔐 Authentication
+
+#### 1. User Registration
+   - URL: `/api/auth/register`
+   - Method: `POST`
+   - Body: `{ "name": "...", "email": "...", "password": "..." }`
+
+#### 2. User Login
+   - URL: `/api/auth/login`
+   - Method: `POST`
+   - Success Response: Returns `{ "token": "JWT_TOKEN_HERE", "user": {...} }`
+
+
 ---
 
 ## 🚀 Getting Started
@@ -166,9 +180,9 @@ Copy the example environment file and fill in your details:
 ## 🛣️ Roadmap & Upcoming Features
 [x] Core Booking Logic: Clean Architecture implementation.
 
-[ ] Authentication Module: JWT-based login/register with Bcrypt (Current Sprint 🚧).
+[x] Authentication Module: JWT-based login/register with Bcrypt. ✅ (Completed)
 
-[ ] Role-Based Access Control (RBAC): Implementing Admin vs. User permissions.
+[ ] Role-Based Access Control (RBAC): Implementing Admin vs. User permissions. (Next Sprint 🚧)
 
 [ ] Unit Testing: Implementing Jest for Use Case logic coverage.
 
