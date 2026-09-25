@@ -10,6 +10,8 @@ export class BookingController {
         const repository = new PrismaBookingRepository();
         const useCase = new CreateBooking(repository);
 
+        const userId = (req as any).user?.id || req.body.userId;
+
         const booking = await useCase.execute({
             roomId: req.body.roomId,
             userId: req.body.userId,
