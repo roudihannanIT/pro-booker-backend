@@ -5,7 +5,8 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "start": "node dist/server.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -15,8 +16,11 @@
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.5.0",
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.13",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
   },
